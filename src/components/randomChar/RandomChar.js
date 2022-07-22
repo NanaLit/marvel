@@ -22,7 +22,7 @@ class RandomChar extends Component {
     }
 
     componentWillUnmount() {
-        clearImmediate(this.timerId);
+        clearInterval(this.timerId);
     }
 
     onCharLoading = () => {
@@ -54,6 +54,7 @@ class RandomChar extends Component {
             .then(this.onCharLoaded)
             .catch(this.onError)
     }
+
     
     render() {
         const {char, loading, error} = this.state;
