@@ -28,8 +28,6 @@ class MarvelService {
             char.description = "Описание персонажа не найдено";
         } else if (char.description.length > 200) {
             char.description = (char.description.slice(0, 199) + '...');
-        } else {
-            char.description = char.description;
         }
 
         return {
@@ -38,8 +36,10 @@ class MarvelService {
             thumbnail: char.thumbnail.path  + '.' + char.thumbnail.extension,
             homepage: char.urls[0].url,
             wiki: char.urls[1].url,
-            id: char.id
+            id: char.id,
+            comics: char.comics.items
         }
+        
     }
 }
 
