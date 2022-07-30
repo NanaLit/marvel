@@ -1,4 +1,6 @@
 import { Component } from 'react';
+import PropTypes from 'prop-types';
+
 import MarvelService from '../../services/MarvelService';
 import Spinner from '../spinner/Spinner';
 import ErrorMessage from '../errorMessage/ErrorMessage';
@@ -18,7 +20,7 @@ class CharList extends Component {
     marvelService = new MarvelService();
 
     componentDidMount() {
-        this.onRequest();
+        this.onRequest();  
     }
 
     onRequest = (offset) => {
@@ -58,17 +60,40 @@ class CharList extends Component {
         })
     }
 
-    viewChars = (arr) =>{
-        const elements = arr.map(item => {
+    itemRefs = [];
+
+    setRef = (ref) => {
+        this.itemRefs.push(ref);
+    }
+
+    focusOnItem = (id) => {
+        this.itemRefs.forEach(item => item.classList.remove('char__item_selected'));
+        this.itemRefs[id].classList.add('char__item_selected');
+        this.itemRefs[id].focus();
+    }
+
+    viewChars(arr){
+        const elements = arr.map((item, i)=> {
             const imgNA = "http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg";
             let imgStyle = {'objectFit' : 'cover'};
             if (item.thumbnail === imgNA) {
                 imgStyle = {'objectFit' : 'fill'};
             }
             return (
-                <li className="char__item" 
+                <li className="char__item"
+                    ref={this.setRef} 
+                    tabIndex={0}
                     key={item.id}
-                    onClick={() => this.props.onCharSelected(item.id)}>
+                    onClick={() => {
+                        this.props.onCharSelected(item.id);
+                        this.focusOnItem(i);
+                    }}
+                    onKeyPress={(e) => {
+                        if (e.key === ' ' || e.key === "Enter") {
+                            this.props.onCharSelected(item.id);
+                            this.focusOnItem(i);
+                        }
+                    }}>
                     <img style={imgStyle} src={item.thumbnail} alt="caracter img"/>
                     <div className="char__name">{item.name}</div>
                 </li>
@@ -80,6 +105,8 @@ class CharList extends Component {
             </ul>
         )
     }
+
+    
     
     render () {
         const {charList, loading, error, offset, newItemLoading, charEnded} = this.state;
@@ -108,8 +135,7 @@ class CharList extends Component {
     
 }
 
-
-
-
-
+CharList.propTypes = {
+    onCharSelected: PropTypes.func.isRequired
+}
 export default CharList;
