@@ -15,6 +15,7 @@ const RandomChar = () => {
     const marvelService = new MarvelService();
 
     useEffect(() => {
+        //проверка
         updateChar();
         // const timerId = setInterval(updateChar, 30000);
 
