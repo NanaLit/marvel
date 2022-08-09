@@ -9,19 +9,18 @@ const ComicsList = (props) => {
 
     const [comicsList, setComicsList] = useState([]);
     const [newComicsLoading, setNewComicsLoading] = useState(false);
-    const [offsetComics, setOffsetcomics] = useState(20);
+    const [offset, setOffset] = useState(0);
     const [comicsEnded, setComicsEnded] = useState(false);
 
     const {loading, error, getAllComics} = useMarvelService();
 
     useEffect(() => {
-        onRequest(offsetComics, true);
-
+        onRequest(offset, true);
     }, []);
 
     const onRequest = (offset, initial) => {
         initial ? setNewComicsLoading(false) : setNewComicsLoading(true);
-        getAllComics(offsetComics)
+        getAllComics(offset)
             .then(onAllComicsLoaded);
     }
 
@@ -32,9 +31,9 @@ const ComicsList = (props) => {
             ended = true;
         }
 
-        setComicsList(comicsList => [...comicsList, ...newComicsList]);
+        setComicsList([...comicsList, ...newComicsList]);
         setNewComicsLoading(false);
-        setOffsetcomics(offsetComics => offsetComics + 8);
+        setOffset(offset + 8);
         setComicsEnded(ended);
     }
 
@@ -96,7 +95,7 @@ const ComicsList = (props) => {
             <button className="button button__main button__long"
                     disabled={newComicsLoading}
                     style={{'display': comicsEnded ? 'none' : 'block'}}
-                    onClick={() => onRequest(offsetComics)}>
+                    onClick={() => onRequest(offset)}>
                 <div className="inner">load more</div>
             </button>
         </div>
