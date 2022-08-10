@@ -1,4 +1,5 @@
 import {useState, useEffect, useRef} from 'react';
+import {Link} from 'react-router-dom';
 import useMarvelService from '../../services/MarvelService';
 import ErrorMessage from '../errorMessage/ErrorMessage';
 import Spinner from '../spinner/Spinner';
@@ -67,11 +68,11 @@ const ComicsList = (props) => {
                             this.focusOnItem(i);
                         }
                     }}>
-                    <a href="#">
+                    <Link to={`/comics/${item.id}`}>
                         <img style={imgStyle} src={item.thumbnail} alt="ultimate war" className="comics__item-img"/>
                         <div className="comics__item-name">{item.name}</div>
                         <div className="comics__item-price">{item.price}</div>
-                    </a>
+                    </Link>
                 </li> 
             ) 
         })

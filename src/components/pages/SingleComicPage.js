@@ -1,34 +1,24 @@
-import './singleComic.scss';
+import './singleComicPage.scss';
 import { useState, useEffect } from 'react';
-import PropTypes from 'prop-types';
+import { useParams, Link } from 'react-router-dom';
 
 import useMarvelService from '../../services/MarvelService';
 import Spinner from '../spinner/Spinner';
 import ErrorMessage from '../errorMessage/ErrorMessage';
-import xMen from '../../resources/img/x-men.png';
 
-const SingleComic = (props) => {
-
+const SingleComicPage = () => {
+    const {comicId} = useParams();
     const [comics, setComics] = useState(null);
 
     const {loading, error, getComics, clearError} = useMarvelService();
 
     useEffect(() => {
         updateComics();
-    }, [])
-
-    useEffect(() => {
-        updateComics();
-    }, [props.comicsId])
+    }, [comicId])
 
     const updateComics = () => {
         clearError();
-        const {comicsId} = props;
-        if (!comicsId) {
-            return;
-        }
-
-        getComics(comicsId)
+        getComics(comicId)
             .then(onComicsLoaded);
     }
 
@@ -59,17 +49,17 @@ const View = ({comics}) => {
     
     return (
         <>
-            <img style={imgStyle} src={thumbnail} alt="x-men" className="single-comic__img"/>
+            <img style={imgStyle} src={thumbnail} alt={name} className="single-comic__img"/>
             <div className="single-comic__info">
                 <h2 className="single-comic__name">{name}</h2>
                 <p className="single-comic__descr">{description}</p>
                 <p className="single-comic__descr">{pages}</p>
-                <p className="single-comic__descr">{language}</p>
+                <p className="single-comic__descr">Language: {language}</p>
                 <div className="single-comic__price">{price}</div>
             </div>
-        <a href="#" className="single-comic__back">Back to all</a>
+        <Link to="/comics" className="single-comic__back">Back to all</Link>
         </>
     )
 }
 
-export default SingleComic;
+export default SingleComicPage;
