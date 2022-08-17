@@ -1,5 +1,7 @@
+import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import {useState, useEffect, useRef} from 'react';
 import {Link} from 'react-router-dom';
+import PropTypes from 'prop-types';
 import useMarvelService from '../../services/MarvelService';
 import ErrorMessage from '../errorMessage/ErrorMessage';
 import Spinner from '../spinner/Spinner';
@@ -54,31 +56,34 @@ const ComicsList = (props) => {
                 imgStyle = {'objectFit' : 'contain'};
             }
             return (
-                <li className="comics__item"
-                    ref={el => itemRefs.current[i] = el} 
-                    tabIndex={0}
-                    key={i}
-                    onClick={() => {
-                        props.onComicsSelected(item.id);
-                        focusOnItem(i);
-                    }}
-                    onKeyPress={(e) => {
-                        if (e.key === ' ' || e.key === "Enter") {
-                            this.props.onCharSelected(item.id);
-                            this.focusOnItem(i);
-                        }
-                    }}>
-                    <Link to={`/comics/${item.id}`}>
-                        <img style={imgStyle} src={item.thumbnail} alt="ultimate war" className="comics__item-img"/>
-                        <div className="comics__item-name">{item.name}</div>
-                        <div className="comics__item-price">{item.price}</div>
-                    </Link>
-                </li> 
+                <CSSTransition key={i} timeout={500} classNames="comics__item">
+                    <li className="comics__item"
+                        ref={el => itemRefs.current[i] = el} 
+                        tabIndex={0}
+                        onClick={() => {
+                            props.onComicsSelected(item.id);
+                            focusOnItem(i);
+                        }}
+                        onKeyPress={(e) => {
+                            if (e.key === ' ' || e.key === "Enter") {
+                                props.onCharSelected(item.id);
+                                focusOnItem(i);
+                            }
+                        }}>
+                        <Link to={`/comics/${item.id}`}>
+                            <img style={imgStyle} src={item.thumbnail} alt="ultimate war" className="comics__item-img"/>
+                            <div className="comics__item-name">{item.name}</div>
+                            <div className="comics__item-price">{item.price}</div>
+                        </Link>
+                    </li> 
+                </CSSTransition>
             ) 
         })
         return (
             <ul className="comics__grid">
-                {elements}  
+                <TransitionGroup component={null}>
+                    {elements}  
+                </TransitionGroup>
             </ul>
         )
     }
@@ -101,6 +106,9 @@ const ComicsList = (props) => {
             </button>
         </div>
     )
+}
+ComicsList.propTypes = {
+    onCharSelected: PropTypes.func.isRequired
 }
 
 export default ComicsList;
