@@ -9,6 +9,7 @@ import Spinner from '../spinner/Spinner';
 import './comicsList.scss';
 
 const ComicsList = (props) => {
+    const nodeRef = useRef(null)
 
     const [comicsList, setComicsList] = useState([]);
     const [newComicsLoading, setNewComicsLoading] = useState(false);
@@ -56,7 +57,7 @@ const ComicsList = (props) => {
                 imgStyle = {'objectFit' : 'contain'};
             }
             return (
-                <CSSTransition key={i} timeout={500} classNames="comics__item">
+                <CSSTransition key={i} timeout={500} classNames="comics__item" nodeRef={nodeRef}>
                     <li className="comics__item"
                         ref={el => itemRefs.current[i] = el} 
                         tabIndex={0}
@@ -66,7 +67,7 @@ const ComicsList = (props) => {
                         }}
                         onKeyPress={(e) => {
                             if (e.key === ' ' || e.key === "Enter") {
-                                props.onCharSelected(item.id);
+                                props.onComicsSelected(item.id);
                                 focusOnItem(i);
                             }
                         }}>
@@ -108,7 +109,7 @@ const ComicsList = (props) => {
     )
 }
 ComicsList.propTypes = {
-    onCharSelected: PropTypes.func.isRequired
+    onComicsSelected: PropTypes.func.isRequired
 }
 
 export default ComicsList;

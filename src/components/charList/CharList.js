@@ -8,6 +8,7 @@ import ErrorMessage from '../errorMessage/ErrorMessage';
 import './charList.scss';
 
 const CharList = (props) => {
+    const nodeRef = useRef(null);
 
     const [charList, setCharList] = useState([]);
     const [newItemLoading, setNewItemLoading] = useState(false);
@@ -56,9 +57,9 @@ const CharList = (props) => {
                 imgStyle = {'objectFit' : 'fill'};
             }
             return (
-                <CSSTransition key={item.id} timeout={500} classNames="char__item">
+                <CSSTransition key={item.id} timeout={500} classNames="char__item" nodeRef={nodeRef}>
                     <li className="char__item"
-                        ref={el => itemRefs.current[i] = el} 
+                        ref={el => itemRefs.current[i] = el}
                         tabIndex={0}
                         onClick={() => {
                             props.onCharSelected(item.id);

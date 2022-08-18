@@ -30,6 +30,11 @@ const useMarvelService = () => {
         return _transformComics(res.data.results[0]);
     }
 
+    const getCharByName = async (name) => {
+        const res = await request(`${_apiBase}characters?name=${name}&${_apiKey}`);
+        return res.data.results.map(_transformCharacter);
+    }
+
     const _transformCharacter = (char) => {
         if (char.description === "") {
             char.description = "Описание персонажа не найдено";
@@ -62,7 +67,7 @@ const useMarvelService = () => {
             id: comics.id
         }
     }
-    return {loading, error, getAllCharacters, getCharacter, getAllComics, getComics, clearError}
+    return {loading, error, getAllCharacters, getCharacter, getCharByName,getAllComics, getComics, clearError}
 }
 
 export default useMarvelService;
