@@ -1,3 +1,5 @@
+import { Helmet } from "react-helmet";
+
 import { useState } from "react";
 import AppBanner from '../appBanner/AppBanner';
 import ComicsList from "../comicsList/ComicsList";
@@ -12,6 +14,10 @@ const ComicsPage = () => {
     }
     return (
         <>
+            <Helmet>
+                <meta name="description" content="Page with list of our comics" />
+                <title>Comics Page</title>
+            </Helmet>
             <AppBanner/>
             <ComicsList onComicsSelected={onComicsSelected}/>
         </>
