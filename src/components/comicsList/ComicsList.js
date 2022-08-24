@@ -8,15 +8,29 @@ import Spinner from '../spinner/Spinner';
 
 import './comicsList.scss';
 
+const setContent = (process, Component, newItemLoading) => {
+    switch (process) {
+        case 'waiting':
+            return <Spinner/>;
+        case 'loading':
+            return newItemLoading? <Component/> : <Spinner/>;
+        case 'confirmed':
+            return <Component/>;
+        case 'error':
+            return <ErrorMessage/>;
+        default:
+            throw new Error('Unexpected process state');
+    }
+}
+
 const ComicsList = (props) => {
-    const nodeRef = useRef(null)
 
     const [comicsList, setComicsList] = useState([]);
     const [newComicsLoading, setNewComicsLoading] = useState(false);
     const [offset, setOffset] = useState(0);
     const [comicsEnded, setComicsEnded] = useState(false);
 
-    const {loading, error, getAllComics} = useMarvelService();
+    const {loading, error, getAllComics, process, setProcess} = useMarvelService();
 
     useEffect(() => {
         onRequest(offset, true);
@@ -25,7 +39,8 @@ const ComicsList = (props) => {
     const onRequest = (offset, initial) => {
         initial ? setNewComicsLoading(false) : setNewComicsLoading(true);
         getAllComics(offset)
-            .then(onAllComicsLoaded);
+            .then(onAllComicsLoaded)
+            .then(() => setProcess('confirmed'));
     }
 
     const onAllComicsLoaded = (newComicsList) => {
@@ -57,7 +72,7 @@ const ComicsList = (props) => {
                 imgStyle = {'objectFit' : 'contain'};
             }
             return (
-                <CSSTransition key={i} timeout={500} classNames="comics__item" nodeRef={nodeRef}>
+                <CSSTransition key={i} timeout={500} classNames="comics__item">
                     <li className="comics__item"
                         ref={el => itemRefs.current[i] = el} 
                         tabIndex={0}
@@ -96,9 +111,7 @@ const ComicsList = (props) => {
 
     return (
         <div className="comics__list">
-            {errorMessage}
-            {spinner}
-            {items}
+            {setContent(process, () => viewComics(comicsList), newComicsLoading)}
             <button className="button button__main button__long"
                     disabled={newComicsLoading}
                     style={{'display': comicsEnded ? 'none' : 'block'}}

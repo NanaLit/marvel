@@ -7,25 +7,39 @@ import ErrorMessage from '../errorMessage/ErrorMessage';
 
 import './charList.scss';
 
+const setContent = (process, Component, newItemLoading) => {
+    switch (process) {
+        case 'waiting':
+            return <Spinner/>;
+        case 'loading':
+            return newItemLoading? <Component/> : <Spinner/>;
+        case 'confirmed':
+            return <Component/>;
+        case 'error':
+            return <ErrorMessage/>;
+        default:
+            throw new Error('Unexpected process state');
+    }
+}
+
 const CharList = (props) => {
-    const nodeRef = useRef(null);
 
     const [charList, setCharList] = useState([]);
     const [newItemLoading, setNewItemLoading] = useState(false);
     const [offset, setOffset] = useState(541);
     const [charEnded, setCharEnded] = useState(false);
 
-    const {loading, error, getAllCharacters} = useMarvelService();
+    const {getAllCharacters, process, setProcess} = useMarvelService();
 
     useEffect(() => {
         onRequest(offset, true);
-
     }, []);
 
     const onRequest = (offset, initial) => {
         initial ? setNewItemLoading(false) : setNewItemLoading(true);
         getAllCharacters(offset)
-            .then(onAllCharsLoaded);
+            .then(onAllCharsLoaded)
+            .then(() => setProcess('confirmed'));
     }
 
     const onAllCharsLoaded = (newCharList) => {
@@ -57,7 +71,7 @@ const CharList = (props) => {
                 imgStyle = {'objectFit' : 'fill'};
             }
             return (
-                <CSSTransition key={item.id} timeout={500} classNames="char__item" nodeRef={nodeRef}>
+                <CSSTransition key={item.id} timeout={500} classNames="char__item">
                     <li className="char__item"
                         ref={el => itemRefs.current[i] = el}
                         tabIndex={0}
@@ -86,17 +100,9 @@ const CharList = (props) => {
         )
     }
 
-
-    const items = viewChars(charList);
-
-    const errorMessage = error ? <ErrorMessage/> : null;
-    const spinner = loading && !newItemLoading ? <Spinner/> : null;
-
     return (
         <div className="char__list">
-            {errorMessage}
-            {spinner}
-            {items}
+            {setContent(process, () => viewChars(charList), newItemLoading)}
             <button 
                 className="button button__main button__long"
                 disabled={newItemLoading}
